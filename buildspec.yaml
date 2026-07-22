@@ -1,0 +1,33 @@
+version: 0.2
+
+env:
+  variables:
+    AWS_DEFAULT_REGION: us-east-1
+    IMAGE_REPO_NAME: coworking-analytics
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+      - REPOSITORY_URI=$ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      - echo Repository URI is $REPOSITORY_URI
+
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - cd analytics
+      # Semantic versioning: 1.0.<build-number> so each build is uniquely tagged.
+      - docker build -t $IMAGE_REPO_NAME:1.0.$CODEBUILD_BUILD_NUMBER .
+      - docker tag $IMAGE_REPO_NAME:1.0.$CODEBUILD_BUILD_NUMBER $REPOSITORY_URI:1.0.$CODEBUILD_BUILD_NUMBER
+      - docker tag $IMAGE_REPO_NAME:1.0.$CODEBUILD_BUILD_NUMBER $REPOSITORY_URI:latest
+
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker images to Amazon ECR...
+      - docker push $REPOSITORY_URI:1.0.$CODEBUILD_BUILD_NUMBER
+      - docker push $REPOSITORY_URI:latest
+      - echo Image pushed successfully.
