@@ -26,6 +26,7 @@ Get the external URL with `kubectl get svc coworking`, then call:
 
 ---
 
+
 ## Stand-Out Suggestions
 
 **Resource allocation.** The deployment sets CPU/memory requests and limits (app: 100m/128Mi request, 250m/256Mi limit; DB: 250m/256Mi request, 500m/512Mi limit) so the scheduler can place pods predictably and prevent any single container from starving the node.
@@ -33,3 +34,4 @@ Get the external URL with `kubectl get svc coworking`, then call:
 **Recommended instance type.** A `t3.small` node is a good fit because the analytics API is a lightweight, low-traffic Python service; its burstable CPU handles periodic report queries cheaply, and it can scale to `t3.medium` only if traffic grows.
 
 **Cost savings.** Costs can be reduced by running a single-node group during development, deleting the EKS cluster when not in use, applying an ECR lifecycle policy to purge old image tags, and setting CloudWatch log retention limits to avoid unbounded log storage.
+

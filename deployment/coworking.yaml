@@ -32,7 +32,7 @@ spec:
         - name: coworking
           # Replace with your ECR image URI, e.g.
           # 123456789012.dkr.ecr.us-east-1.amazonaws.com/coworking-analytics:1.0.1
-          image: <DOCKER_IMAGE_URI_FROM_ECR>
+          image: 651873544881.dkr.ecr.us-east-1.amazonaws.com/coworking-analytics:1.0.2
           imagePullPolicy: Always
           ports:
             - containerPort: 5153
